@@ -197,7 +197,7 @@ class plt_update_onclick:
             self.fig.canvas.draw()
 
 
-def soup_bowl():
+def soup_bowl(x_train,y_train):
     """ Create figure and plot with a 3D projection"""
     fig = plt.figure(figsize=(8,8))
 
@@ -214,14 +214,14 @@ def soup_bowl():
     b = np.linspace(-20, 20, 100)
 
     #Get the z value for a bowl-shaped cost function
-    z=np.zeros((len(w), len(b)))
-    j=0
-    for x in w:
-        i=0
-        for y in b:
-            z[i,j] = x**2 + y**2
-            i+=1
-        j+=1
+    z = np.zeros((len(w), len(b)))
+    j = 0
+    for wi in w:
+        i = 0
+        for bj in b:
+            z[i, j] = compute_cost(x_train.reshape(-1, 1), y_train, wi, bj)
+            i += 1
+        j += 1
 
     #Meshgrid used for plotting 3D functions
     W, B = np.meshgrid(w, b)
