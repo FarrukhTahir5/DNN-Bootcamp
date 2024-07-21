@@ -84,11 +84,14 @@ def get_state(bird, pipes, bird_velocity):
     bird_height = bird.height / HEIGHT
     bird_width = bird.width / WIDTH
 
-    if(bird.y>bottom_pipe_top):
-        distance_from_gap=bird.y-bottom_pipe_top
+    if bird.y > bottom_pipe_top:
+        distance_from_gap = bird.y - bottom_pipe_top
     else:
-        distance_from_gap=top_pipe_bottom-bird.y
+        distance_from_gap = top_pipe_bottom - bird.y
 
+    # Normalize the distance from the gap
+    gap_height = top_pipe_bottom - bottom_pipe_top
+    normalized_distance = distance_from_gap / gap_height
     
     # Return the state as a NumPy array
     return np.array([
@@ -99,7 +102,7 @@ def get_state(bird, pipes, bird_velocity):
         pipe_gap_bottom,         # Bottom of the pipe gap
         pipe_gap_size,           # Size of the pipe gap
         bird_height,             # Height of the bird
-        distance_from_gap               # Width of the bird
+        normalized_distance               # Width of the bird
     ])
 
 
@@ -127,15 +130,15 @@ def get_reward(bird, pipes):
     gap_size = gap_bottom - gap_top
     normalized_distance = distance_from_center / gap_size
 
-    # Reward function: closer to the center, higher the reward
-    # The reward is higher when the normalized distance is lower
-    reward = 1 - normalized_distance
-
-    # Apply a small penalty if the bird is not within the gap
+    # Calculate the reward
     if bird.y > gap_top and (bird.y + bird.height) < gap_bottom:
-        return reward
+        # Reward for being within the gap
+        reward = 1 - normalized_distance  # Closer to 0 means better (center of the gap)
     else:
-        return -0.5  # Penalty for not being within the gap
+        # Penalty for not being within the gap
+        reward = -1 - normalized_distance  # More negative as the bird is farther from the center
+
+    return reward
 
 def create_pipe():
     height = random.randint(100, 400)
@@ -259,7 +262,7 @@ def automatic_play():
         t_act[1]+=action
         # Bird movement based on action
         current_time = time.time()
-        if action >0.03  and (current_time - last_jump_time) > COOLDOWN_PERIOD:
+        if action >0.7  and (current_time - last_jump_time) > COOLDOWN_PERIOD:
             bird_velocity = -8
             last_jump_time = current_time  
 
