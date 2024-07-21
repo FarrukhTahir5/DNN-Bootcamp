@@ -105,7 +105,6 @@ def get_state(bird, pipes, bird_velocity):
         normalized_distance               # Width of the bird
     ])
 
-
 def get_reward(bird, pipes):
     # Extract pipe information
     top_pipe = pipes[0][0]
@@ -119,24 +118,22 @@ def get_reward(bird, pipes):
     gap_top = top_pipe.bottom
     gap_bottom = bottom_pipe.top
 
-    # Calculate the center of the gap
-    gap_center = (gap_top + gap_bottom) / 2
-
-    # Calculate the distance from the bird's center to the center of the gap
+    # Calculate the distance from the bird's center to the bottom of the gap
     bird_center = bird.y + bird.height / 2
-    distance_from_center = abs(bird_center - gap_center)
+    distance_from_bottom = bird_center - gap_bottom
 
     # Normalize the distance based on the size of the gap
     gap_size = gap_bottom - gap_top
-    normalized_distance = distance_from_center / gap_size
+    normalized_distance = abs(distance_from_bottom) / gap_size
 
     # Calculate the reward
     if bird.y > gap_top and (bird.y + bird.height) < gap_bottom:
-        # Reward for being within the gap
-        reward = 1 - normalized_distance  # Closer to 0 means better (center of the gap)
+        # Reward for being within the gap and closer to the bottom
+        reward = 1 - normalized_distance  # Closer to 1 means better (closer to bottom)
     else:
-        # Penalty for not being within the gap
-        reward = -1 - normalized_distance  # More negative as the bird is farther from the center
+        # Apply same reward for being below the gap as if being within the gap
+        # The further below the bottom, the higher the reward
+        reward = 1 - normalized_distance  # Reward is the same as being close to the bottom
 
     return reward
 
@@ -232,10 +229,9 @@ def train_model(model, training_data, epochs=10):
     model.fit(states, rewards, epochs=epochs)
     model.save(os.path.join(model_dir,'model.keras'))
 
+
 def automatic_play():
     global bird_velocity
-    COOLDOWN_PERIOD = 0# Cooldown period in seconds
-    last_jump_time = 0
     if(os.path.join(model_dir,'model.keras')):
         model=tf.keras.models.load_model(os.path.join(model_dir,'model.keras'))
         print("model loaded")
@@ -253,18 +249,8 @@ def automatic_play():
         state = get_state(bird, pipes, bird_velocity)
         action = model.predict(state.reshape(1, 8), verbose=0)[0][0]
         print(f"S:{state} A:{action}")
-        if(t_act[0]>10):
-            # print(t_act[1]/10)
-            t_act[0]=0
-            t_act[1]=0
-        t_act[0]+=1
-        # print(t_act)
-        t_act[1]+=action
-        # Bird movement based on action
-        current_time = time.time()
-        if action >0.7  and (current_time - last_jump_time) > COOLDOWN_PERIOD:
+        if action >0.7 :
             bird_velocity = -8
-            last_jump_time = current_time  
 
             if hasattr(pygame, 'mixer'):
                 jump_sound.play()
