@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion Detection</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Face Emotion Recognition</h1>
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="file">Upload an Image</label>
+                <input type="file" class="form-control-file" id="file" name="file" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Upload and Predict</button>
+        </form>
+        {% if image_url %}
+        <div class="mt-5">
+            <h3>Predicted Emotion: {{ emotion }}</h3>
+            <img src="{{ image_url }}" class="img-fluid" alt="Predicted Image">
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
