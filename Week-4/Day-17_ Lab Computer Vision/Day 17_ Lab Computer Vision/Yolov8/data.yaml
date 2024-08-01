@@ -1,0 +1,13 @@
+train: E:\data\train\images
+val: E:\data\valid\images
+test: E:\data\test\images
+
+nc: 3
+names: ['head', 'helmet', 'person']
+
+roboflow:
+  workspace: facial-emotion-detection
+  project: hard-hat-sample-h6hez
+  version: 2
+  license: Public Domain
+  url: https://app.roboflow.com/facial-emotion-detection/hard-hat-sample-h6hez/2
