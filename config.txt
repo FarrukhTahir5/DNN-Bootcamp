@@ -1,0 +1,3 @@
+C:/Users/Farrukh/Downloads/yolov3.weights
+C:/Users/Farrukh/Downloads/yolov3.cfg
+C:/Users/Farrukh/Downloads/coco.names

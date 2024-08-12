@@ -1,0 +1,13 @@
+train: E:\facial\train\images
+val: E:\facial\valid\images
+test: E:\facial\test\images
+
+nc: 3
+names: ['happy', 'hello', 'sad']
+
+roboflow:
+  workspace: asim-shah
+  project: facial-emotion-detection-mjeff
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/asim-shah/facial-emotion-detection-mjeff/dataset/1
